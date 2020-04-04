@@ -8,17 +8,18 @@ using namespace std;
 struct subset {
     int parent; // to store the name of the current set
     int rank; // to specify the number of elements in the current set
-}
+};
 
 struct edge {
     int src;
     int parent;
     int weight;
-}
+};
 
 class Graph {
 private:
-    int V, int E;
+    int V, E;
+    int count = 0;
     vector<edge> Edge;
 
     // find the current node set name
@@ -28,7 +29,7 @@ private:
     void Union(vector<subset>& subsets, int x, int y);
 
     struct {
-        bool operator() (Edge& edge1, Edge& edge2) {
+        bool operator() (edge& edge1, edge& edge2) {
             return edge1.weight < edge2.weight;
         }
     } compEdge;
@@ -69,13 +70,14 @@ void Graph::Union(vector<subset>& subsets, int x, int y) {
 }
 
 void Graph::addEdge(int src, int dst, int weight) {
-    Edge[src].src = src;
-    Edge[src].parent = dst;
-    Edge[src].weight = weight;
+    Edge[count].src = src;
+    Edge[count].parent = dst;
+    Edge[count].weight = weight;
+    count++;
 }
 
-void kruskalMST() {
-    vector<Edge> result[V];
+void Graph::kruskalMST() {
+    vector<edge> result;
     int e = 0;
     int i = 0;
 
@@ -91,13 +93,15 @@ void kruskalMST() {
     while (e < V - 1 && i < E) {
 
         edge next_edge = Edge[i++];
+        cout << next_edge.weight << endl;
 
         int x = find(subsets, next_edge.src);
         int y = find(subsets, next_edge.parent);
 
         if (x != y) {
-            result[e++] = next_edge;
+            result.push_back(next_edge);
             Union(subsets, x, y);
+            e++;
         }
     }
 
@@ -123,31 +127,13 @@ int main()
   
   
     // add edge 0-1  
-    graph->edge[0].src = 0;  
-    graph->edge[0].dest = 1;  
-    graph->edge[0].weight = 10;  
+    graph.addEdge(0, 1, 10);
+    graph.addEdge(0, 2, 6);
+    graph.addEdge(0, 3, 5);
+    graph.addEdge(1, 3, 15);
+    graph.addEdge(2, 3, 4);
   
-    // add edge 0-2  
-    graph->edge[1].src = 0;  
-    graph->edge[1].dest = 2;  
-    graph->edge[1].weight = 6;  
-  
-    // add edge 0-3  
-    graph->edge[2].src = 0;  
-    graph->edge[2].dest = 3;  
-    graph->edge[2].weight = 5;  
-  
-    // add edge 1-3  
-    graph->edge[3].src = 1;  
-    graph->edge[3].dest = 3;  
-    graph->edge[3].weight = 15;  
-  
-    // add edge 2-3  
-    graph->edge[4].src = 2;  
-    graph->edge[4].dest = 3;  
-    graph->edge[4].weight = 4;  
-  
-    KruskalMST(graph);  
+    graph.kruskalMST();  
     
     return 0;
 }
