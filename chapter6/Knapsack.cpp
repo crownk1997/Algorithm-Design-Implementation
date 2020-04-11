@@ -5,20 +5,18 @@ using namespace std;
 
 void findSolution(const vector<vector<int>>& resultMatrix, const vector<int>& weights) {
     int i = resultMatrix.size()-1;
-    for (int j = resultMatrix[0].size() - 1; j >= 0;) {
-        if (resultMatrix[i][j] == resultMatrix[i][j-1])
-            j--;
-        else {
-            if (i == 0)
-                break;
-            j -= weights[i-1];
-            cout << "Item: " << i << " Weight: " << weights[i-1] << endl;
+    for (int j = resultMatrix[0].size() - 1; (j >= 0) && (i >= 1);) {
+        if (resultMatrix[i][j] == resultMatrix[i-1][j]) {
+            i--;
+        } else {
+            cout << "Item " << i << " weights " << weights[i] << endl;
+            j -= weights[i];
             i--;
         }
     }
 }
 
-int maxBenifit(int totalWeight, const vector<int>& weights) {
+void maxBenifit(int totalWeight, const vector<int>& weights) {
     int totalInd = weights.size();
     vector<vector<int>> M(totalInd+1, vector<int>(totalWeight+1));
 
@@ -29,7 +27,7 @@ int maxBenifit(int totalWeight, const vector<int>& weights) {
         M[i][0] = 0;
     
     for (int i = 1; i <= totalInd; i++) {
-        for (int j = 0; j < totalWeight; j++) {
+        for (int j = 1; j <= totalWeight; j++) {
             if (j < weights[i-1])
                 M[i][j] = M[i-1][j];
             else {
@@ -40,14 +38,14 @@ int maxBenifit(int totalWeight, const vector<int>& weights) {
 
     findSolution(M, weights);
     
-    return M[totalInd][totalWeight-1];    
+    cout << "Max benifit is " << M[totalInd][totalWeight] << endl;
 }
 
 int main() {
     vector<int> weights = {2, 2, 3, 5, 8};
     int totalWeight = 10;
 
-    cout << "Max benifit is: " << maxBenifit(totalWeight, weights) << endl;
+    maxBenifit(totalWeight, weights);
 
     return 0;
 }
